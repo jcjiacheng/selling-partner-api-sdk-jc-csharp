@@ -101,4 +101,4 @@ jobs:
         branch: feature/update-java-sdk
         assignees: mafge
         path: ./selling-partner-api-sdk
-        token: ${{ secrets.MAFGE_PAT }}
+        # token: ${{ secrets.JC_PAT }}
