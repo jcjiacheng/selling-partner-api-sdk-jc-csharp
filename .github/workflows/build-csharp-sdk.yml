@@ -89,7 +89,7 @@ jobs:
           java -jar openapi-generator-cli-7.9.0.jar generate -i ../../selling-partner-api-models/models/vehicles-api-model/vehicles_2024-11-01.json -g csharp -t config/templates -o sdk -c config/config.json --additional-properties=modelPackage=Model\\vehicles\\v2024_11_01,apiPackage=Api\\vehicles\\v2024_11_01
       - name: Restore dependencies
         run: dotnet restore
-      - name: Build and release SDK
+      - name: Build SDK and generate artifact
         working-directory: ./selling-partner-api-sdk-jc-csharp/csharp
         run: |
             dotnet build --configuration Release
