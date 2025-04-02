@@ -17,9 +17,10 @@ jobs:
         with:
           repository: amzn/selling-partner-api-models
           path: selling-partner-api-models
-      - uses: actions/setup-dotnet@v3
+      - name: Install .NET
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '7.0.x'
     #   - uses: actions/cache@v3
     #     with:
     #       path: ~/.nuget/packages
@@ -32,8 +33,8 @@ jobs:
       - name: Remove old sdk files
         working-directory: ./selling-partner-api-sdk/csharp/sdk
         run: rm -r *
-      - name: Copy Auth&Auth lib
-        run: cp selling-partner-api-models/clients/sellingpartner-api-aa-csharp/src/Amazon.SellingPartnerAPIAA/* selling-partner-api-sdk/csharp/sdk/src/SellingPartnerAPIAA
+      # - name: Copy Auth&Auth lib
+      #   run: cp selling-partner-api-models/clients/sellingpartner-api-aa-csharp/src/Amazon.SellingPartnerAPIAA/* selling-partner-api-sdk/csharp sdk/SellingPartnerAPIAA
       - name: Execute openapi codegen
         working-directory: ./selling-partner-api-sdk/csharp
         run: |
@@ -86,8 +87,10 @@ jobs:
           java -jar openapi-generator-cli-7.9.0.jar generate -i ../../selling-partner-api-models/models/vendor-shipments-api-model/vendorShipments.json -g csharp -t config/templates -o sdk -c config/config.json --additional-properties=modelPackage=Model\\vendor\\shipments\\v1,apiPackage=Api\\vendor\\shipments\\v1 && \
           java -jar openapi-generator-cli-7.9.0.jar generate -i ../../selling-partner-api-models/models/vendor-transaction-status-api-model/vendorTransactionStatus.json -g csharp -t config/templates -o sdk -c config/config.json --additional-properties=modelPackage=Model\\vendor\\transactionStatus\\v1,apiPackage=Api\\vendor\\transactionStatus\\v1 && \
           java -jar openapi-generator-cli-7.9.0.jar generate -i ../../selling-partner-api-models/models/vehicles-api-model/vehicles_2024-11-01.json -g csharp -t config/templates -o sdk -c config/config.json --additional-properties=modelPackage=Model\\vehicles\\v2024_11_01,apiPackage=Api\\vehicles\\v2024_11_01
-      - name: Build .NET SDK
-        working-directory: ./selling-partner-api-sdk/csharp/sdk
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build and release SDK
+        working-directory: ./selling-partner-api-sdk/csharp
         run: |
             dotnet build --configuration Release
             dotnet pack --configuration Release --output nupkg
@@ -99,6 +102,7 @@ jobs:
           body: |
             Update Csharp SDK with latest changes from upstream.
           branch: feature/update-csharp-sdk
+          delete-branch: true  # Overwrite if branch exists
           assignees: xujiache
-          path: ./selling-partner-api-sdk
-          token: ${{ secrets.MAFGE_PAT }}
+          path: ./selling-partner-api-sdk-jc-csharp
+        #   token: ${{ secrets.MAFGE_PAT }}

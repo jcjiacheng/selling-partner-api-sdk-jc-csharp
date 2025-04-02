@@ -1,4 +1,4 @@
 {
-    "packageName":"software.amazon.spapi",
-    "targetFramework":"net6.0"
+    "packageName":"Amazon.SellingPartnerAPI.SDK",
+    "targetFramework":"net7.0"
 }

@@ -1,0 +1,35 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "csharp", "csharp", "{B41BF331-FCCB-2ADF-CDB6-767964B34647}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sdk", "sdk", "{26047EB4-0509-DAFF-7D0F-7D72B6D3175D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ECFD4149-27F7-B34E-11D2-EBEE489A6375}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.SellingPartnerAPIAA", "csharp\sdk\src\SellingPartnerAPIAA\Amazon.SellingPartnerAPIAA.csproj", "{060132C4-044F-2243-EC01-0BE6298FCDDE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{060132C4-044F-2243-EC01-0BE6298FCDDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{060132C4-044F-2243-EC01-0BE6298FCDDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{060132C4-044F-2243-EC01-0BE6298FCDDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{060132C4-044F-2243-EC01-0BE6298FCDDE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{26047EB4-0509-DAFF-7D0F-7D72B6D3175D} = {B41BF331-FCCB-2ADF-CDB6-767964B34647}
+		{ECFD4149-27F7-B34E-11D2-EBEE489A6375} = {26047EB4-0509-DAFF-7D0F-7D72B6D3175D}
+		{060132C4-044F-2243-EC01-0BE6298FCDDE} = {ECFD4149-27F7-B34E-11D2-EBEE489A6375}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6913A5C3-1170-4CAC-A514-40CE7B7D0F31}
+	EndGlobalSection
+EndGlobal
