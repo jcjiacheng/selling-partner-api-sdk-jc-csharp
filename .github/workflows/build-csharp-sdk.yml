@@ -90,6 +90,12 @@ jobs:
       - name: Restore dependencies
         working-directory: ./selling-partner-api-sdk-jc-csharp/csharp
         run: dotnet restore
+      - name: Debug - Check for .resx files
+        run: |
+            echo "Checking for .resx files..."
+            find $GITHUB_WORKSPACE -name "*.resx"
+            echo "Current directory structure:"
+            ls -R
       - name: Build SDK and generate artifact
         working-directory: ./selling-partner-api-sdk-jc-csharp/csharp
         run: |
