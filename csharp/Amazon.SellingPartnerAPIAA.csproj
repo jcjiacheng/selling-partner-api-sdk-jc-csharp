@@ -19,9 +19,8 @@
 
   <ItemGroup>
     <PackageReference Include="RestSharp" Version="106.12.0" />
-    <PackageReference Include="Stubble.Core" Version="1.0.0" />  
+    <PackageReference Include="Stubble.Core" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-
     <!-- <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />  
     <PackageReference Include="System.Text.Json" Version="7.0.0" /> -->
   </ItemGroup>
@@ -30,4 +29,8 @@
     <Folder Include="config/templates" />
     <Folder Include="docs" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources/**/*.resx" />
+  </ItemGroup>
+
 </Project>
