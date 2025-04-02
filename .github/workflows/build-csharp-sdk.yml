@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          path: selling-partner-api-sdk
+          path: selling-partner-api-sdk-jc-csharp
       - uses: actions/checkout@v4
         with:
           repository: amzn/selling-partner-api-models
@@ -28,15 +28,15 @@ jobs:
     #       restore-keys: |
     #         ${{ runner.os }}-nuget-
       - name: Download openapi codegen
-        working-directory: ./selling-partner-api-sdk/csharp
+        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp
         run: curl -O https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.9.0/openapi-generator-cli-7.9.0.jar
       - name: Remove old sdk files
-        working-directory: ./selling-partner-api-sdk/csharp/sdk
+        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/sdk
         run: rm -r *
       # - name: Copy Auth&Auth lib
-      #   run: cp selling-partner-api-models/clients/sellingpartner-api-aa-csharp/src/Amazon.SellingPartnerAPIAA/* selling-partner-api-sdk/csharp sdk/SellingPartnerAPIAA
+      #   run: cp selling-partner-api-models/clients/sellingpartner-api-aa-csharp/src/Amazon.SellingPartnerAPIAA/* selling-partner-api-sdk-jc-csha/csharp sdk/SellingPartnerAPIAA
       - name: Execute openapi codegen
-        working-directory: ./selling-partner-api-sdk/csharp
+        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp
         run: |
           java -jar openapi-generator-cli-7.9.0.jar generate -i ../../selling-partner-api-models/models/amazon-warehousing-and-distribution-model/awd_2024-05-09.json -g csharp -t config/templates -o sdk -c config/config.json --additional-properties=modelPackage=Model\\awd\\v2024_05_09,apiPackage=Api\\awd\\v2024_05_09 && \
           java -jar openapi-generator-cli-7.9.0.jar generate -i ../../selling-partner-api-models/models/aplus-content-api-model/aplusContent_2020-11-01.json -g csharp -t config/templates -o sdk -c config/config.json --additional-properties=modelPackage=Model\\aplusContent\\v2020_11_01,apiPackage=Api\\aplusContent\\v2020_11_01 && \
@@ -90,7 +90,7 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Build and release SDK
-        working-directory: ./selling-partner-api-sdk/csharp
+        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp
         run: |
             dotnet build --configuration Release
             dotnet pack --configuration Release --output nupkg
