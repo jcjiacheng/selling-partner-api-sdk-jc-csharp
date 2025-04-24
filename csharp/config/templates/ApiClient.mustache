@@ -22,8 +22,10 @@ using RestSharp.Portable.HttpClient;
 using RestSharp;
 {{/netStandard}}
 using Amazon.SellingPartnerAPIAA;
+using Polly;
 using RateLimiter;
 using System.Threading;
+using Polly.Timeout;
 
 namespace {{packageName}}.Client
 {
@@ -46,7 +48,7 @@ namespace {{packageName}}.Client
         /// </summary>
         /// <param name="request">The RestSharp request object</param>
         /// <exception cref="Amazon.SellingPartnerAPIAA.LWAException">Thrown when there is an error during LWA Authorization</exception>
-        private void InterceptRequest(IRestRequest request)
+        private void InterceptRequest(RestRequest request)
         {
             lwaAuthorizationSigner.Sign(request);
         }
@@ -56,7 +58,7 @@ namespace {{packageName}}.Client
         /// </summary>
         /// <param name="request">The RestSharp request object</param>
         /// <param name="response">The RestSharp response object</param>
-        partial void InterceptResponse(IRestRequest request, IRestResponse response);
+        partial void InterceptResponse(RestRequest request, RestResponse response);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApiClient" /> class
@@ -67,7 +69,14 @@ namespace {{packageName}}.Client
         {
             Configuration = config ?? {{packageName}}.Client.Configuration.Default;
 
-            RestClient = new RestClient(Configuration.BasePath);
+            var options = new RestClientOptions
+            {
+                BaseUrl = new Uri(Configuration.BasePath),
+                MaxTimeout = Configuration.Timeout,
+                UserAgent = Configuration.UserAgent,
+            };
+
+            RestClient = new RestClient(options);
             {{#netStandard}}
             RestClient.IgnoreResponseStatusCode = true;
             {{/netStandard}}
@@ -141,7 +150,7 @@ namespace {{packageName}}.Client
                 {{/netStandard}}
                 {{^netStandard}}
                 {{^supportsUWP}}
-                request.AddFile(param.Value.Name, param.Value.Writer, param.Value.FileName, param.Value.ContentLength, param.Value.ContentType);
+                request.AddFile(param.Value.Name, param.Value.FileName, param.Value.ContentType);
                 {{/supportsUWP}}
                 {{#supportsUWP}}
                 byte[] paramWriter = null;
@@ -188,10 +197,10 @@ namespace {{packageName}}.Client
                 pathParams, contentType);
 
             // set timeout
-            {{#netStandard}}RestClient.Timeout = TimeSpan.FromMilliseconds(Configuration.Timeout);{{/netStandard}}
-            {{^netStandard}}RestClient.Timeout = Configuration.Timeout;{{/netStandard}}
+            // {{#netStandard}}RestClient.Timeout = TimeSpan.FromMilliseconds(Configuration.Timeout);{{/netStandard}}
+            // {{^netStandard}}RestClient.Timeout = Configuration.Timeout;{{/netStandard}}
             // set user agent
-            RestClient.UserAgent = Configuration.UserAgent;
+            // RestClient.UserAgent = Configuration.UserAgent;
 
             InterceptRequest(request);
             if(rateLimitConfig != null)
@@ -199,7 +208,7 @@ namespace {{packageName}}.Client
                 var cancellationSource = new CancellationTokenSource(rateLimitConfig.getTimeOut());
                 try
                 {
-                    var response = rateLimiter.Enqueue<IRestResponse>(() =>  RestClient.Execute(request), cancellationSource.Token);
+                    var response = rateLimiter.Enqueue<RestResponse>(() =>  RestClient.Execute(request), cancellationSource.Token);
                     InterceptResponse(request, response.Result);
                     return response.Result;
                 }
@@ -219,7 +228,7 @@ namespace {{packageName}}.Client
             {{/supportsUWP}}
             {{#supportsUWP}}
             // Using async method to perform sync call (uwp-only)
-            var response = RestClient.ExecuteTaskAsync(request).Result;
+            var response = RestClient.Execute(request);
             {{/supportsUWP}}
             {{/netStandard}}
             InterceptResponse(request, response);
@@ -254,13 +263,13 @@ namespace {{packageName}}.Client
             if (rateLimitConfig != null)
             {
               var cancellationSource = new CancellationTokenSource(rateLimitConfig.getTimeOut());
-              var response =  await rateLimiter.Enqueue<IRestResponse>(() => RestClient.ExecuteTaskAsync(request), cancellationSource.Token);                
+              var response =  await rateLimiter.Enqueue<RestResponse>(() => RestClient.ExecuteAsync(request), cancellationSource.Token);                
               InterceptResponse(request, response);
               return response;
             }
             else
             {
-              var response = await RestClient.Execute{{^netStandard}}TaskAsync{{/netStandard}}(request);
+              var response = await RestClient.ExecuteAsync(request);
               InterceptResponse(request, response);
               return (Object)response;	
             }
@@ -332,7 +341,7 @@ namespace {{packageName}}.Client
         /// <param name="response">The HTTP response.</param>
         /// <param name="type">Object type.</param>
         /// <returns>Object representation of the JSON string.</returns>
-        public object Deserialize(IRestResponse response, Type type)
+        public object Deserialize(RestResponse response, Type type)
         {
             {{^netStandard}}IList<Parameter>{{/netStandard}}{{#netStandard}}IHttpHeaders{{/netStandard}} headers = response.Headers;
             if (type == typeof(byte[])) // return byte array
