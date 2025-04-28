@@ -270,14 +270,14 @@ namespace {{packageName}}.{{apiPackage}}
 
             // make the HTTP request
             RestResponse localVarResponse = (RestResponse) this.Configuration.ApiClient.CallApi(localVarPath,
-                Method.{{#lambda.lowercase}}{{httpMethod}}{{/lambda.lowercase}}, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                Method.{{#equals httpMethod "POST"}}Post{{/equals}}{{#equals httpMethod "GET"}}Get{{/equals}}{{#equals httpMethod "PUT"}}Put{{/equals}}{{#equals httpMethod "DELETE"}}Delete{{/equals}}{{#equals httpMethod "PATCH"}}Patch{{/equals}}, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
                 localVarPathParams, localVarHttpContentType);
 
             int localVarStatusCode = (int) localVarResponse.StatusCode;
 
             if (ExceptionFactory != null)
             {
-                Exception exception = ExceptionFactory("{{operationId}}", localVarResponse);
+                Exception exception = Exception("{{operationId}}", localVarResponse.ErrorException);
                 if (exception != null) throw exception;
             }
 
@@ -406,14 +406,14 @@ namespace {{packageName}}.{{apiPackage}}
 
             // make the HTTP request
             RestResponse localVarResponse = (RestResponse) await this.Configuration.ApiClient.CallApiAsync(localVarPath,
-                Method.{{#lambda.lowercase}}{{httpMethod}}{{/lambda.lowercase}}, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                Method.{{#equals httpMethod "POST"}}Post{{/equals}}{{#equals httpMethod "GET"}}Get{{/equals}}{{#equals httpMethod "PUT"}}Put{{/equals}}{{#equals httpMethod "DELETE"}}Delete{{/equals}}{{#equals httpMethod "PATCH"}}Patch{{/equals}}, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
                 localVarPathParams, localVarHttpContentType);
 
             int localVarStatusCode = (int) localVarResponse.StatusCode;
 
             if (ExceptionFactory != null)
             {
-                Exception exception = ExceptionFactory("{{operationId}}", localVarResponse);
+                Exception exception = Exception("{{operationId}}", localVarResponse.ErrorException);
                 if (exception != null) throw exception;
             }
 
@@ -423,9 +423,10 @@ namespace {{packageName}}.{{apiPackage}}
                 ({{{returnType}}}) this.Configuration.ApiClient.Deserialize(localVarResponse, typeof({{#returnContainer}}{{{returnContainer}}}{{/returnContainer}}{{^returnContainer}}{{{returnType}}}{{/returnContainer}})));
             {{/returnType}}
             {{^returnType}}
-            return new ApiResponse<Object>(localVarResponse.StatusCode,
-                ConvertToMultimap(localVarResponse),
-                null);
+            return new ApiResponse<Object>(
+                statusCode: localVarResponse.StatusCode,
+                headers: ConvertToMultimap(localVarResponse),
+                data: null);
             {{/returnType}}
         }
 

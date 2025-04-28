@@ -82,10 +82,10 @@ jobs:
       - name: Print workspace path
         run: echo ${{ github.workspace }}
       - name: Copy auth lib files to sdk directory
-        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/sdk/src/Amazon.SellingPartnerAPI.SDK
+        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/sdk/src/
         run: |
             mkdir Authlib
-            cp ${{ github.workspace }}/selling-partner-api-models/clients/sellingpartner-api-aa-csharp/src/Amazon.SellingPartnerAPIAA/*.cs ./Authlib/
+            cp ../../authlib/* ./Authlib/
       - name: Restore dependencies
         working-directory: ./selling-partner-api-sdk-jc-csharp/csharp
         run: dotnet restore

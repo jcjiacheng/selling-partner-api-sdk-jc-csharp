@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Amazon.SellingPartnerAPIAA;
+using RestSharp;
 
 namespace {{packageName}}.Client
 {
@@ -54,7 +55,7 @@ namespace {{packageName}}.Client
             {{^netStandard}}if (status == 0)
             {
                 return new ApiException(status,
-                    string.Format("Error calling {0}: {1}", methodName, response.ErrorMessage), response.ErrorMessage);
+                    string.Format("Error calling {0}: {1}", methodName, response.ErrorText), response.ErrorText);
             }{{/netStandard}}
             return null;
         };
@@ -100,7 +101,7 @@ namespace {{packageName}}.Client
 
         static Configuration()
         {
-            _globalConfiguration = new GlobalConfiguration();
+            _globalConfiguration = (Configuration)GlobalConfiguration.Instance;
         }
 
         /// <summary>
@@ -224,7 +225,8 @@ namespace {{packageName}}.Client
                 _basePath = value;
                 // pass-through to ApiClient if it's set.
                 if(_apiClient != null) {
-                    _apiClient.RestClient.BaseUrl = new Uri(_basePath);
+                    /// _apiClient.RestClient.Options.BaseUrl = new Uri(_basePath);
+                    setNewBaseUrl(_basePath);
                 }
             }
         }
@@ -239,10 +241,40 @@ namespace {{packageName}}.Client
         /// </summary>
         public virtual int Timeout
         {
-            {{#netStandard}}get { return (int)ApiClient.RestClient.Timeout.GetValueOrDefault(TimeSpan.FromSeconds(0)).TotalMilliseconds; }
-            set { ApiClient.RestClient.Timeout = TimeSpan.FromMilliseconds(value); }{{/netStandard}}{{^netStandard}}
-            get { return ApiClient.RestClient.Timeout; }
-            set { ApiClient.RestClient.Timeout = value; }{{/netStandard}}
+            /// {{#netStandard}}get { return (int)ApiClient.RestClient.Timeout.GetValueOrDefault(TimeSpan.FromSeconds(0)).TotalMilliseconds; }
+            /// set { ApiClient.RestClient.Timeout = TimeSpan.FromMilliseconds(value); }{{/netStandard}}{{^netStandard}}
+            /// get { return ApiClient.RestClient.Timeout; }
+            /// set { ApiClient.RestClient.Timeout = value; }{{/netStandard}}
+            get { return (int?)_apiClient.RestClient.Options.Timeout?.TotalMilliseconds ?? 0; }
+            set { setNewTimeOut(value); }
+        }
+
+
+        /// <param name="value"></param> in millisecond
+        private void setNewTimeOut(int value)
+        {
+            var options = new RestClientOptions(_apiClient.RestClient.Options.BaseUrl)
+            {
+                Timeout = TimeSpan.FromMilliseconds(value),
+                UserAgent = _apiClient.RestClient.Options.UserAgent,
+                // Copy other options...
+            };
+            lock(GlobalConfigSync){
+                _apiClient.RestClient = new RestClient(options);
+            }
+        }
+
+        private void setNewBaseUrl(String url)
+        {
+            var options = new RestClientOptions(url)
+            {
+                Timeout = _apiClient.RestClient.Options.Timeout,
+                UserAgent = _apiClient.RestClient.Options.UserAgent,
+                // Copy other options...
+            };
+            lock(GlobalConfigSync){
+                _apiClient.RestClient = new RestClient(options);
+            }
         }
 
         /// <summary>
