@@ -95,6 +95,12 @@ namespace {{packageName}}.{{apiPackage}}
             ExceptionFactory = {{packageName}}.Client.Configuration.DefaultExceptionFactory;
         }
 
+        IReadableConfiguration IApiAccessor.Configuration 
+        {
+            get => Configuration;  // Implicit upcast to interface
+            set => Configuration = (Amazon.SellingPartnerAPI.SDK.Client.Configuration)value;
+        }
+
         /// <summary>
         /// Gets the base path of the API client.
         /// </summary>
@@ -269,7 +275,7 @@ namespace {{packageName}}.{{apiPackage}}
             {{/authMethods}}
 
             // make the HTTP request
-            RestResponse localVarResponse = (RestResponse) this.Configuration.ApiClient.CallApi(localVarPath, Method.{{#isPost}}Post{{/isPost}}{{#isGet}}Get{{/isGet}}{{#isPut}}Put{{/isPut}}{{#isDelete}}Delete{{/isDelete}}{{#isPatch}}Patch{{/isPatch}}, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams, localVarPathParams, localVarHttpContentType);
+            RestResponse localVarResponse = (RestResponse) this.Configuration.ApiClient.CallApi(localVarPath, ChangeHttpMethod(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams, localVarPathParams, localVarHttpContentType);
 
             int localVarStatusCode = (int) localVarResponse.StatusCode;
 
@@ -404,8 +410,7 @@ namespace {{packageName}}.{{apiPackage}}
             {{/authMethods}}
 
             // make the HTTP request
-            RestResponse localVarResponse = (RestResponse) await this.Configuration.ApiClient.CallApiAsync(localVarPath, Method.{{#isPost}}Post{{/isPost}}{{#isGet}}Get{{/isGet}}{{#isPut}}Put{{/isPut}}{{#isDelete}}Delete{{/isDelete}}{{#isPatch}}Patch{{/isPatch}}, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams, localVarPathParams, localVarHttpContentType);
-
+            RestResponse localVarResponse = (RestResponse) await this.Configuration.ApiClient.CallApiAsync(localVarPath, ChangeHttpMethod(), localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams, localVarPathParams, localVarHttpContentType);
             int localVarStatusCode = (int) localVarResponse.StatusCode;
 
             if (ExceptionFactory != null)
@@ -477,6 +482,28 @@ namespace {{packageName}}.{{apiPackage}}
                 multimap.Add(header.Name, header.Value?.ToString());
             }
             return multimap;
+        }
+
+
+        private static RestSharp.Method ChangeHttpMethod() {
+            string httpMethod = "{{httpMethod}}";
+            switch(httpMethod) {
+                case "GET":
+                    // GET logic
+                    return Method.Get;
+                case "POST":
+                    // POST logic
+                    return Method.Post;
+                case "DELETE":
+                    return Method.Delete;
+                case "PUT":
+                    return Method.Put;
+                case "PATCH":
+                    return Method.Patch;
+                case "OPTIONS":
+                    return Method.Options;
+            }
+            return Method.Head;
         }
 
     }
