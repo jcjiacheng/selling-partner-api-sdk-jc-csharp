@@ -275,7 +275,7 @@ namespace {{packageName}}.{{apiPackage}}
 
             if (ExceptionFactory != null)
             {
-                Exception exception = Exception("{{operationId}}", localVarResponse.ErrorException);
+                Exception exception = new Exception("{{operationId}}", localVarResponse.ErrorException);
                 if (exception != null) throw exception;
             }
 
@@ -285,9 +285,10 @@ namespace {{packageName}}.{{apiPackage}}
                 ({{{returnType}}}) this.Configuration.ApiClient.Deserialize(localVarResponse, typeof({{#returnContainer}}{{{returnContainer}}}{{/returnContainer}}{{^returnContainer}}{{{returnType}}}{{/returnContainer}})));
             {{/returnType}}
             {{^returnType}}
-            return new ApiResponse<Object>(localVarResponse.StatusCode,
-                ConvertToMultimap(localVarResponse),
-                null);
+            return new ApiResponse<Object>(
+                statusCode: localVarResponse.StatusCode,
+                headers: ConvertToMultimap(localVarResponse),
+                data: null);
             {{/returnType}}
         }
 
@@ -409,7 +410,7 @@ namespace {{packageName}}.{{apiPackage}}
 
             if (ExceptionFactory != null)
             {
-                Exception exception = Exception("{{operationId}}", localVarResponse.ErrorException);
+                Exception exception = new Exception("{{operationId}}", localVarResponse.ErrorException);
                 if (exception != null) throw exception;
             }
 

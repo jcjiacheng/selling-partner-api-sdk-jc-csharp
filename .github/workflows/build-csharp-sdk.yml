@@ -82,15 +82,19 @@ jobs:
       - name: Print workspace path
         run: echo ${{ github.workspace }}
       - name: Copy auth lib files to sdk directory
-        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/sdk/src/
+        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/sdk/src/Amazon.SellingPartnerAPI.SDK/
         run: |
             mkdir Authlib
-            cp ../../authlib/* ./Authlib/
+            cp ../../../authlib/* ./Authlib/
+      - name: Copy csproj file to be under sdk folder
+        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/sdk/
+        run: |
+            cp ../Amazon.SellingPartnerAPIAA.csproj .
       - name: Restore dependencies
-        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp
+        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/sdk
         run: dotnet restore
       - name: Build SDK and generate artifact
-        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp
+        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/sdk
         run: |
             dotnet build --configuration Release
             dotnet pack --configuration Release --output nupkg
