@@ -91,10 +91,10 @@ jobs:
         # run: |
         #     cp ../Amazon.SellingPartnerAPIAA.csproj .
       - name: Restore dependencies
-        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/
+        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/sdk
         run: dotnet restore
       - name: Build SDK and generate artifact
-        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/
+        working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/sdk
         run: |
             dotnet build --configuration Release
             dotnet pack --configuration Release --output nupkg
