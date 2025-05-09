@@ -86,10 +86,6 @@ jobs:
         run: |
             mkdir Authlib
             cp ../../../authlib/* ./Authlib/
-      # - name: Copy csproj file to be under sdk folder
-        # working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/sdk/
-        # run: |
-        #     cp ../Amazon.SellingPartnerAPIAA.csproj .
       - name: Restore dependencies
         working-directory: ./selling-partner-api-sdk-jc-csharp/csharp/
         run: dotnet restore
