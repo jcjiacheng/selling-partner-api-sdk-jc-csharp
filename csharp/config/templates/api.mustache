@@ -282,7 +282,7 @@ namespace {{packageName}}.{{apiPackage}}
             if (ExceptionFactory != null)
             {
                 Exception exception = new Exception("{{operationId}}", localVarResponse.ErrorException);
-                if (exception != null) throw exception;
+                // if (exception != null) throw exception;
             }
 
             {{#returnType}}
@@ -416,7 +416,7 @@ namespace {{packageName}}.{{apiPackage}}
             if (ExceptionFactory != null)
             {
                 Exception exception = new Exception("{{operationId}}", localVarResponse.ErrorException);
-                if (exception != null) throw exception;
+                // if (exception != null) throw exception;
             }
 
             {{#returnType}}
