@@ -7,13 +7,15 @@ using System.Linq;
 using System.Reflection;
 using RestSharp;
 using Xunit;
+using Amazon.SellingPartnerAPIAA;
+using NSubstitute;
 
 using {{packageName}}.Client;
 using {{packageName}}.{{apiPackage}};
 {{#hasImport}}using {{packageName}}.{{modelPackage}};
 {{/hasImport}}
 
-namespace {{packageName}}.Test
+namespace {{packageName}}.{{apiPackage}}.Test
 {
     /// <summary>
     ///  Class for testing {{classname}}
@@ -56,6 +58,7 @@ namespace {{packageName}}.Test
         /// <summary>
         /// Test {{operationId}}
         /// </summary>
+        [Fact]
         public void {{operationId}}Test()
         {
             // TODO uncomment below to test the method and replace null with proper value

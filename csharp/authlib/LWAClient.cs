@@ -12,12 +12,11 @@ namespace Amazon.SellingPartnerAPIAA
         public const string AccessTokenKey = "access_token";
         public const string ErrorCodeKey = "error";
         public const string ErrorDescKey = "error_description";
-        public const string JsonMediaType = "application/json; charset=utf-8";
+        public const string JsonMediaType = "application/json";
 
-        public IRestClient RestClient { get; set; }
         public LWAAccessTokenRequestMetaBuilder LWAAccessTokenRequestMetaBuilder { get; set; }
         public LWAAuthorizationCredentials LWAAuthorizationCredentials { get; private set; }
-
+        public RestClient RestClient { get; set; }
 
         public LWAClient(LWAAuthorizationCredentials lwaAuthorizationCredentials)
         {

@@ -245,8 +245,19 @@ namespace {{packageName}}.Client
             /// set { ApiClient.RestClient.Timeout = TimeSpan.FromMilliseconds(value); }{{/netStandard}}{{^netStandard}}
             /// get { return ApiClient.RestClient.Timeout; }
             /// set { ApiClient.RestClient.Timeout = value; }{{/netStandard}}
-            get { return (int?)_apiClient.RestClient.Options.Timeout?.TotalMilliseconds ?? 0; }
+            get 
+            { 
+               if (_apiClient == null) 
+               {
+                    return 0;
+               }
+               return (int?)_apiClient.RestClient.Options.Timeout?.TotalMilliseconds ?? 0; 
+            }
             set { setNewTimeOut(value); }
+        }
+
+        public void initializeApiClient() {
+            if (_apiClient == null) _apiClient = CreateApiClient();
         }
 
 

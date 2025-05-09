@@ -31,5 +31,15 @@ namespace Amazon.SellingPartnerAPIAA
                 this.ClientSecret == other.ClientSecret &&
                 this.Scope == other.Scope;
         }
+        
+        public override string ToString()
+        {
+            return $"LWAAccessTokenRequestMeta {{ " +
+                $"GrantType = {GrantType ?? "null"}, " +
+                $"RefreshToken = {(RefreshToken != null ? "***" : "null")}, " + // masked for security
+                $"ClientId = {ClientId ?? "null"}, " +
+                $"ClientSecret = {(ClientSecret != null ? "***" : "null")}, " + // masked for security
+                $"Scope = {Scope ?? "null"} }}";
+        }
     }
 }

@@ -23,7 +23,6 @@ using RestSharp;
 {{/netStandard}}
 using Amazon.SellingPartnerAPIAA;
 using Polly;
-using System.Threading.RateLimiting;
 using System.Threading;
 using Polly.Timeout;
 
@@ -364,7 +363,7 @@ namespace {{packageName}}.Client
         /// <returns>Object representation of the JSON string.</returns>
         public object Deserialize(RestResponse response, Type type)
         {
-            {{^netStandard}}IList<Parameter>{{/netStandard}}{{#netStandard}}IHttpHeaders{{/netStandard}} headers = (IList<Parameter>)response.Headers;
+            var headers = response.Headers;
             if (type == typeof(byte[])) // return byte array
             {
                 return response.RawBytes;
