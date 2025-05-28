@@ -475,7 +475,7 @@ namespace {{packageName}}.{{apiPackage}}
             }
         }
         
-        public static Multimap<string, string> ConvertToMultimap(RestResponse response)
+        private static Multimap<string, string> ConvertToMultimap(RestResponse response)
         {
             var multimap = new Multimap<string, string>();
             foreach (var header in response.Headers)
