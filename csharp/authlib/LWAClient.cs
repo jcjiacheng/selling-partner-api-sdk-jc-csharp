@@ -13,11 +13,12 @@ namespace Amazon.SellingPartnerAPIAA
     public class LWAClient
     {
         public const string AccessTokenKey = "access_token";
+        public const string AccessTokenExpireKey = "expires_in";
         public const string ErrorCodeKey = "error";
         public const string ErrorDescKey = "error_description";
         public const string JsonMediaType = "application/json";
 
-        // access_token duration is 3600 seconds
+        // default access_token duration is 3600 seconds
         public TimeSpan accessTokenDuration = TimeSpan.FromSeconds(3600);
         //public const string JsonMediaType = "application/x-www-form-urlencoded";
         public RestClient RestClient { get; set; }
@@ -64,10 +65,10 @@ namespace Amazon.SellingPartnerAPIAA
                 {
                     if (_accessToken != null && _expireAt > DateTime.UtcNow)
                     {
+                        // access token is valid
                         return _accessToken;
                     }
                 }
-                Console.WriteLine("GetAccessToken: " + lwaAccessTokenRequestMeta.ToString());
                 var response = RestClient.Execute(accessTokenRequest);
                 JObject responseJson = !String.IsNullOrEmpty(response.Content) ? JObject.Parse(response.Content) : null;
 
@@ -86,11 +87,14 @@ namespace Amazon.SellingPartnerAPIAA
                     throw new LWAException(LWAExceptionErrorCode.other.ToString(), "Other LWA Exception", "Error getting LWA Access Token");
                 }
                 accessToken = responseJson.GetValue(AccessTokenKey).ToString();
+                int latestDuration = responseJson.GetValue(AccessTokenExpireKey).Value<int>();
+                TimeSpan latestDurationSpan =  TimeSpan.FromSeconds(latestDuration);
                 DateTime currentExpire = DateTime.UtcNow.Add(accessTokenDuration);
                 lock (_lock)
                 {
                     if (_accessToken == null || _expireAt <= DateTime.UtcNow)
                     {
+                        // double check current access token is either empty or invalid after reagining the lock 
                         _accessToken = accessToken;
                         _expireAt = currentExpire;
                         return _accessToken;
@@ -105,10 +109,14 @@ namespace Amazon.SellingPartnerAPIAA
             }
             catch (LWAException e)
             {
+                // during exception when get new access token, need to empty the access token
+                _accessToken = null;
                 throw new LWAException(e.getErrorCode(), e.getErrorMessage(), e.Message);
             }
             catch (Exception e)
             {
+                //during exception when get new access token, need to empty the access token
+                _accessToken = null;
                 throw new SystemException("Error getting LWA Access Token", e);
             }
 
