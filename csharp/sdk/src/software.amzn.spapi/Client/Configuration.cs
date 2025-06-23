@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Amazon.SellingPartnerAPIAA;
+using software.amzn.spapi.Auth;
 using RestSharp;
 
 namespace software.amzn.spapi.Client
@@ -56,15 +56,25 @@ namespace software.amzn.spapi.Client
             {
                 return new ApiException(status,
                     string.Format("Error calling {0}: {1}", methodName, response.Content),
-                    response.Content);
+                    response.Content, ConvertHeadersToMultimap(response));
             }
             if (status == 0)
             {
                 return new ApiException(status,
-                    string.Format("Error calling {0}: {1}", methodName, response.ErrorText), response.ErrorText);
+                    string.Format("Error calling {0}: {1}", methodName, response.ErrorMessage), response.ErrorMessage);
             }
             return null;
         };
+
+        private static Multimap<string, string> ConvertHeadersToMultimap(RestResponse response)
+        {
+            var multimap = new Multimap<string, string>();
+            foreach (var header in response.Headers)
+            {
+                multimap.Add(header.Name, header.Value?.ToString());
+            }
+            return multimap;
+        }
 
         /// <summary>
         /// Gets or sets the default Configuration.
